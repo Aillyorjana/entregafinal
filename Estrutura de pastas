@@ -1,0 +1,39 @@
+pf_blog/
+├─ pf_blog/                 # settings, urls, wsgi/asgi
+├─ pages/                   # app do blog / páginas
+│  ├─ migrations/
+│  ├─ templates/pages/
+│  │  ├─ pages_list.html
+│  │  ├─ pages_detail.html
+│  │  ├─ page_form.html
+│  │  ├─ page_confirm_delete.html
+│  ├─ models.py
+│  ├─ views.py
+│  ├─ forms.py
+│  ├─ urls.py
+├─ accounts/
+│  ├─ templates/accounts/
+│  │  ├─ login.html
+│  │  ├─ register.html
+│  │  ├─ profile.html
+│  │  ├─ profile_form.html
+│  ├─ models.py
+│  ├─ views.py
+│  ├─ forms.py
+│  ├─ urls.py
+├─ messenger/
+│  ├─ templates/messenger/
+│  │  ├─ inbox.html
+│  │  ├─ message_detail.html
+│  ├─ models.py
+│  ├─ views.py
+│  ├─ forms.py
+│  ├─ urls.py
+├─ static/
+├─ media/
+├─ templates/
+│  ├─ base.html
+│  ├─ about.html
+├─ requirements.txt
+├─ .gitignore
+├─ manage.py
