@@ -1,0 +1,26 @@
+# Ailly Orjana De Marco - PF - Blog
+
+## Descrição
+Aplicação web estilo blog usando Django com funcionalidades: páginas, cadastro/login, perfil, mensagens, CRUD de páginas.
+
+## Rodando localmente
+1. git clone ...
+2. criar virtualenv, instalar dependências `pip install -r requirements.txt`
+3. configurar `.env` (se necessário)
+4. `python manage.py migrate`
+5. `python manage.py createsuperuser`
+6. `python manage.py runserver`
+
+## Requisitos entregues
+- Herança de templates (base.html)
+- pages na rota / (pages:list) e details em /pages/<slug>/
+- Sobre em /about/
+- Login, registro, perfil, edição de perfil e alteração de senha
+- Mensageria básica entre usuários
+- 2+ CBV, uso de mixin e decorator
+- Admin com registro de modelos
+- .gitignore com db.sqlite3, media, __pycache__
+- requirements.txt atualizado
+
+
+
