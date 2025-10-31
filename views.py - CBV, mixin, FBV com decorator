@@ -1,0 +1,94 @@
+# pages/mixins.py:
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class OwnerRequiredMixin(LoginRequiredMixin):
+    """Mixin que exige login e pode ser estendido para checar permissões."""
+    login_url = 'accounts:login'
+
+#pages/views.py — lista e detalhe com CBV, criação/edição/exclusão com CBV:
+
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from .models import Page
+from .forms import PageForm
+from .mixins import OwnerRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+
+class PageListView(ListView):
+    model = Page
+    template_name = 'pages/pages_list.html'
+    context_object_name = 'pages'
+    paginate_by = 6
+
+    def get_queryset(self):
+        q = self.request.GET.get('q')
+        qs = super().get_queryset().order_by('-published_at')
+        if q:
+            return qs.filter(title__icontains=q)
+        return qs
+
+class PageDetailView(DetailView):
+    model = Page
+    template_name = 'pages/pages_detail.html'
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
+
+class PageCreateView(OwnerRequiredMixin, CreateView):
+    model = Page
+    form_class = PageForm
+    template_name = 'pages/page_form.html'
+
+class PageUpdateView(OwnerRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Page
+    form_class = PageForm
+    template_name = 'pages/page_form.html'
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
+
+    def test_func(self):
+        # exemplo: permitir apenas staff ou superuser (ajuste conforme necessário)
+        return self.request.user.is_staff or self.request.user.is_superuser
+
+class PageDeleteView(OwnerRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Page
+    template_name = 'pages/page_confirm_delete.html'
+    success_url = reverse_lazy('pages:list')
+
+    def test_func(self):
+        return self.request.user.is_staff or self.request.user.is_superuser
+
+#accounts/views.py — exemplo de view decorada para edição de perfil:
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import ProfileForm
+
+@login_required
+def edit_profile(request):
+    profile = request.user.profile
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:profile')
+    else:
+        form = ProfileForm(instance=profile)
+    return render(request, 'accounts/profile_form.html', {'form': form})
+
+#Exemplo de registro (FBV):
+
+from django.shortcuts import render, redirect
+from .forms import RegisterForm
+from django.contrib.auth import login
+
+def register(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('pages:list')
+    else:
+        form = RegisterForm()
+    return render(request, 'accounts/register.html', {'form': form})
